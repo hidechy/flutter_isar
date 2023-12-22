@@ -1,16 +1,6 @@
-# test_isar_sample
+## isar
+- youtube
+[Isar Database Tutorial #3 - Generating a Flutter App](https://www.youtube.com/watch?v=Fi7Q3X5IzCg&list=PLKKf8l1ne4_hMBtRykh9GCC4MMyteUTyf&index=4)
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- official
+[クイックスタート](https://isar.dev/ja/tutorials/quickstart.html)
