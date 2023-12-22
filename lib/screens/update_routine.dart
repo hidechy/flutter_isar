@@ -4,19 +4,17 @@ import 'package:isar/isar.dart';
 import '../collections/category.dart';
 import '../collections/routine.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.isar});
+class UpdateRoutine extends StatefulWidget {
+  const UpdateRoutine({super.key, required this.isar, required this.routine});
 
   final Isar isar;
+  final Routine routine;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<UpdateRoutine> createState() => _UpdateRoutineState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-//  List<String> categories = ['work', 'school', 'home'];
-//String dropdownValue = 'work';
-
+class _UpdateRoutineState extends State<UpdateRoutine> {
   List<Category>? categories;
   Category? dropdownValue;
 
@@ -34,14 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _readCategory();
+    _setUpdateRoutine();
   }
 
   ///
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Routine')),
+      appBar: AppBar(title: const Text('Update Routine')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -57,15 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: dropdownValue,
                       dropdownColor: Colors.pinkAccent.withOpacity(0.1),
                       icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                      // items: categories.map<DropdownMenuItem<String>>(
-                      //   (String nvalue) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: nvalue,
-                      //       child: Text(nvalue),
-                      //     );
-                      //   },
-                      // ).toList(),
-
                       items: categories?.map<DropdownMenuItem<Category>>(
                         (Category nvalue) {
                           return DropdownMenuItem<Category>(
@@ -74,13 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ).toList(),
-
-                      // onChanged: (String? value) {
-                      //   setState(() {
-                      //     dropdownValue = value!;
-                      //   });
-                      // },
-
                       onChanged: (Category? value) {
                         setState(() {
                           dropdownValue = value!;
@@ -168,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.center,
                 child: ElevatedButton(
                   onPressed: () {
-                    _addRoutine();
+                    _updateRoutine();
                   },
-                  child: const Text('Add'),
+                  child: const Text('Update'),
                 ),
               ),
             ],
@@ -221,27 +203,43 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   ///
-  Future<void> _addRoutine() async {
+  _setUpdateRoutine() async {
+    await _readCategory();
+
+    _titleEditingController.text = widget.routine.title;
+    _timeEditingController.text = widget.routine.startTime;
+
+    dropdownDay = widget.routine.day;
+
+    // await widget.routine.category.load();
+    //
+    // int? getId = widget.routine.category.value?.id;
+    //
+    // print(widget.routine.category.value);
+    //
+    // setState(() {
+    //   dropdownValue = categories?[getId! - 1];
+    // });
+  }
+
+  ///
+  _updateRoutine() async {
     final routineCollection = widget.isar.routines;
 
-    final newRoutine = Routine()
-      ..title = _titleEditingController.text
-      ..startTime = _timeEditingController.text
-      ..day = dropdownDay
-      ..category.value = dropdownValue;
-
     await widget.isar.writeTxn(() async {
-      await routineCollection.put(newRoutine);
+      final routine = await routineCollection.get(widget.routine.routineId);
+
+      routine!
+        ..title = _titleEditingController.text
+        ..startTime = _timeEditingController.text
+        ..day = dropdownDay
+        ..category.value = dropdownValue;
+
+      await routineCollection.put(routine);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     });
-
-    _titleEditingController.clear();
-    _timeEditingController.clear();
-
-    dropdownDay = 'Sunday';
-    dropdownValue = null;
-
-    if (mounted) {
-      Navigator.pop(context, true);
-    }
   }
 }

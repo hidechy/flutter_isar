@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:test_isar_sample/screens/home_screen.dart';
+import 'package:test_isar_sample/screens/update_routine.dart';
 
 import '../collections/routine.dart';
 
@@ -38,9 +39,7 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(isar: widget.isar),
-                      ),
+                      MaterialPageRoute(builder: (context) => HomeScreen(isar: widget.isar)),
                     );
                   },
                   child: const Text('add routine'),
@@ -73,7 +72,17 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UpdateRoutine(
+                                          isar: widget.isar,
+                                          routine: routines![index],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                   icon: const Icon(Icons.info_outline_rounded),
                                 ),
                               ],
