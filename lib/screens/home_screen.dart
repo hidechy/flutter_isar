@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:test_isar_sample/collections/category.dart';
+
+import '../collections/category.dart';
+import '../collections/routine.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.isar});
@@ -165,7 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _addRoutine();
+                  },
                   child: const Text('Add'),
                 ),
               ),
@@ -214,5 +218,26 @@ class _HomeScreenState extends State<HomeScreen> {
       dropdownValue = null;
       categories = getCategories;
     });
+  }
+
+  ///
+  Future<void> _addRoutine() async {
+    final routineCollection = widget.isar.routines;
+
+    final newRoutine = Routine()
+      ..title = _titleEditingController.text
+      ..startTime = _timeEditingController.text
+      ..day = dropdownDay
+      ..category.value = dropdownValue;
+
+    await widget.isar.writeTxn(() async {
+      await routineCollection.put(newRoutine);
+    });
+
+    _titleEditingController.clear();
+    _timeEditingController.clear();
+
+    dropdownDay = 'Sunday';
+    dropdownValue = null;
   }
 }
