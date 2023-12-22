@@ -239,5 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     dropdownDay = 'Sunday';
     dropdownValue = null;
+
+    Navigator.pop(context);
   }
 }

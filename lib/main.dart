@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'screens/home_screen.dart';
+import 'screens/routine_card_screen.dart';
 import 'collections/category.dart';
 import 'collections/routine.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(useMaterial3: false),
-      home: HomeScreen(isar: isar),
+      home: RoutineCardScreen(isar: isar),
     );
   }
 }
