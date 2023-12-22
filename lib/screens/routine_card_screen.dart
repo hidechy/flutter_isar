@@ -21,7 +21,7 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
   @override
   void initState() {
     super.initState();
-    _readRoutine();
+//    _readRoutine();
   }
 
   ///
@@ -46,53 +46,17 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
                 ),
               ],
             ),
-            Expanded(
-              child: (routines == null)
-                  ? Container()
-                  : ListView.separated(
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            title: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(routines![index].routineId.toString()),
-                                      Text(
-                                        (routines![index].category.value == null)
-                                            ? ''
-                                            : routines![index].category.value!.name,
-                                      ),
-                                      Text(routines![index].title),
-                                      Text(routines![index].startTime),
-                                      Text(routines![index].day),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => UpdateRoutine(
-                                          isar: widget.isar,
-                                          routine: routines![index],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.info_outline_rounded),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => Container(),
-                      itemCount: routines!.length,
-                    ),
+            FutureBuilder<List<Widget>>(
+              future: _displayRoutineCard(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(
+                    child: Column(children: snapshot.data!),
+                  );
+                }
+
+                return Container();
+              },
             ),
           ],
         ),
@@ -100,6 +64,7 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
     );
   }
 
+  ///
   Future<void> _readRoutine() async {
     final routineCollection = widget.isar.routines;
 
@@ -108,5 +73,55 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
     setState(() {
       routines = getRoutines;
     });
+  }
+
+  ///
+  Future<List<Widget>> _displayRoutineCard() async {
+    await _readRoutine();
+
+    List<Widget> list = [];
+
+    for (var i = 0; i < routines!.length; i++) {
+      list.add(
+        Card(
+          child: ListTile(
+            title: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(routines![i].routineId.toString()),
+                      Text(
+                        (routines![i].category.value == null) ? '' : routines![i].category.value!.name,
+                      ),
+                      Text(routines![i].title),
+                      Text(routines![i].startTime),
+                      Text(routines![i].day),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdateRoutine(
+                          isar: widget.isar,
+                          routine: routines![i],
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline_rounded),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return list;
   }
 }
