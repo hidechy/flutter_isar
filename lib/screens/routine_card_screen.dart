@@ -17,6 +17,10 @@ class RoutineCardScreen extends StatefulWidget {
 class _RoutineCardScreenState extends State<RoutineCardScreen> {
   List<Routine>? routines = [];
 
+  final TextEditingController _searchEditingController = TextEditingController();
+
+  bool searching = false;
+
   ///
   @override
   void initState() {
@@ -31,6 +35,20 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
+              child: TextFormField(
+                onChanged: (value) {
+                  _searchRoutineByName(searchText: value);
+                },
+                controller: _searchEditingController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Search Text',
+                ),
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -77,7 +95,11 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
 
   ///
   Future<List<Widget>> _displayRoutineCard() async {
-    await _readRoutine();
+    if (searching) {
+      await _searchRoutineByName(searchText: _searchEditingController.text);
+    } else {
+      await _readRoutine();
+    }
 
     List<Widget> list = [];
 
@@ -123,5 +145,17 @@ class _RoutineCardScreenState extends State<RoutineCardScreen> {
     }
 
     return list;
+  }
+
+  ///
+  _searchRoutineByName({required String searchText}) async {
+    searching = true;
+
+    final routineCollection = widget.isar.routines;
+    final searchResults = await routineCollection.filter().titleContains(searchText).findAll();
+
+    setState(() {
+      routines = searchResults;
+    });
   }
 }
