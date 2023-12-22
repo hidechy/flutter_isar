@@ -39,7 +39,38 @@ class _UpdateRoutineState extends State<UpdateRoutine> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Update Routine')),
+      appBar: AppBar(
+        title: const Text('Update Routine'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Delete Routine'),
+                      content: const Text('delete?'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _deleteRoutine();
+                          },
+                          child: const Text('yes'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('no'),
+                        ),
+                      ],
+                    );
+                  });
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -241,5 +272,19 @@ class _UpdateRoutineState extends State<UpdateRoutine> {
         Navigator.pop(context);
       }
     });
+  }
+
+  ///
+  _deleteRoutine() async {
+    final routineCollection = widget.isar.routines;
+
+    await widget.isar.writeTxn(() async {
+      routineCollection.delete(widget.routine.routineId);
+    });
+
+    if (mounted) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    }
   }
 }
